@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { database, auth } from "../firebase/firebase.config"; // Firebase configuration
 import { ref, push } from "firebase/database";
+import Swal from "sweetalert2";
 
 const RegisterMentor = () => {
   const [name, setName] = useState("");
@@ -25,7 +26,14 @@ const RegisterMentor = () => {
       status: "pending", // Default status
     });
 
-    alert("Your application has been submitted!");
+    // Show submit success message
+    Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "Application Submit Successfully",
+      showConfirmButton: false,
+      timer: 1500
+    })
     setName("");
     setEmail("");
     setPhone("");
