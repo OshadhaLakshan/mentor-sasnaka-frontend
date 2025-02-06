@@ -16,8 +16,8 @@ const Footer = () => {
         </div>
 
         <div className="md:w-1/3 w-full">
-            <div className="max-w-screen-xl mx-auto px-10 m-4 flex flex-row justify-end items-center">
-                <input type="email" placeholder="Subscribe to our NewsLetter..." className="w-[400px] px-4 py-2 rounded-l-md text-black" />
+            <div className="max-w-screen-xl mx-auto md:px-10 px-4 md:m-4 m-5 flex flex-row justify-end items-center">
+                <input type="email" placeholder="Subscribe to NewsLetter..." className="w-[400px] px-4 py-2 rounded-l-md text-black" />
                 <button href='#subscribe' className="bg-gray-400 px-6 py-2 text-black hover:text-white rounded-r-md hover:bg-black">Subscribe</button>
             </div>
         </div>

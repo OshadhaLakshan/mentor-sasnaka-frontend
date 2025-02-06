@@ -14,7 +14,7 @@ const Header = () => {
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-4">
             <Link to="/">
-              <HiAcademicCap className="lg:size-8 size-7"/>
+              <HiAcademicCap className="lg:size-8 size-6"/>
             </Link>
           <h1 className="sm:text-2xl md:text-3xl text-md font-primary font-semibold">Mentor-Mentee Platform</h1>
         </div>
@@ -25,7 +25,7 @@ const Header = () => {
           <nav>
             <ul className="flex space-x-4">
             <li>
-              <button onClick={handleLogout} className="text-lg font-primary text-gray-900 bg-white py-2 px-10 rounded-full hover:bg-gray-400">
+              <button onClick={handleLogout} className="md:text-lg text-sm font-primary text-gray-900 bg-white md:py-2 py-1 md:px-10 px-3 rounded-full hover:bg-gray-400">
                 <Link to="/">Logout</Link>
               </button>
             </li>

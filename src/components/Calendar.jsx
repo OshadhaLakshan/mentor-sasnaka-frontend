@@ -20,7 +20,7 @@ const Calendar = () => {
             />
           </div>
           </div>
-          <div className="flex items-center gap-4 rounded-full bg-gray-400 mx-8">
+          <div className="flex items-center gap-4 rounded-full bg-gray-400 md:mx-8">
             <button className="text-2xl font-primary text-white bg-blue-950 py-3 px-9 rounded-full hover:bg-black">
               Schedule
             </button>

@@ -111,7 +111,7 @@ const Home = () => {
           <div><Feedback /></div>
         </div>
       ) : (
-        <div className="bg-gray-300 px-10 py-10">
+        <div className="bg-gray-300 md:px-10 md:py-10">
           <Swiper
             slidesPerView={1}
             spaceBetween={30}
