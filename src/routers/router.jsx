@@ -14,6 +14,7 @@ import RegisterMentor from "../components/RegisterMentor";
 import AdminRoute from "./AdminRoute";
 import AdminDashboard from "../components/AdminDashboard";
 import AdminLogin from "../components/AdminLogin";
+import RegisterMentee from "../components/RegisterMentee";
 
 const router = createBrowserRouter([
     {
@@ -43,6 +44,10 @@ const router = createBrowserRouter([
             {
                 path: "/register-mentor",
                 element: <PrivateRoute><RegisterMentor /></PrivateRoute>
+            },
+            {
+                path: "/register-mentee",
+                element: <PrivateRoute><RegisterMentee /></PrivateRoute>
             },
             {
                 path: "/chats",

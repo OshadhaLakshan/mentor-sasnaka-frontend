@@ -18,27 +18,31 @@ const AdminDashboard = () => {
 
   // Fetch Groups and their Participants
   useEffect(() => {
-    const groupsRef = ref(database, "groups");
+    const groupsRef = ref(database, "groups/");
     const unsubscribe = onValue(groupsRef, (snapshot) => {
       const data = snapshot.val();
       if (data) {
         const sortedGroups = {};
         Object.keys(data).forEach((groupId) => {
-          sortedGroups[groupId] = { name: `Group ${groupId}`, leader: null, mentors: [], mentees: [] };
-
-          Object.values(data[groupId].participants).forEach((member) => {
-            if (member.role === "leader") sortedGroups[groupId].leader = member;
-            else if (member.role === "mentor") sortedGroups[groupId].mentors.push(member);
-            else if (member.role === "mentee") sortedGroups[groupId].mentees.push(member);
-          });
+          const groupData = data[groupId];
+  
+          sortedGroups[groupId] = {
+            name: groupData.name || `Group ${groupId}`,
+            leader: groupData.participants?.leader || null, // Single leader email
+            mentors: groupData.participants?.mentors || [], // Array of mentor emails
+            mentees: groupData.participants?.mentees || [], // Array of mentee emails
+          };
         });
-
+  
         setGroups(sortedGroups);
+      } else {
+        setGroups({});
       }
     });
-
+  
     return () => unsubscribe();
   }, []);
+    
 
   // Fetch Mentors, Leaders & Mentees
   useEffect(() => {
@@ -166,62 +170,64 @@ const AdminDashboard = () => {
         </button>
       </div>
 
-      {/* Groups Section */}
-      <div className="bg-white p-6 rounded-lg shadow-md mb-6">
-        <h3 className="text-2xl font-bold mb-4">Groups & Participants</h3>
-        {Object.keys(groups).length > 0 ? (
-          <div className="space-y-4">
-            {Object.keys(groups).map((groupId) => {
-              const { name, leader, mentors, mentees } = groups[groupId];
+{/* Groups Section */} 
+<div className="bg-white p-6 rounded-lg shadow-md mb-6">
+  <h3 className="text-2xl font-bold mb-4">Groups & Participants</h3>
+  {Object.keys(groups).length > 0 ? (
+    <div className="space-y-4">
+      {Object.keys(groups).map((groupId) => {
+        const { name, leader, mentors, mentees } = groups[groupId];
 
-              return (
-                <div key={groupId} className="border rounded-lg p-4 shadow-md">
-                  <h3 className="text-xl font-semibold mb-2">{name}</h3>
+        return (
+          <div key={groupId} className="border rounded-lg p-4 shadow-md">
+            <h3 className="text-xl font-semibold mb-2">{name}</h3>
 
-                  {leader ? (
-                    <div className="leader bg-blue-900 text-white p-3 rounded-md cursor-pointer flex justify-between"
-                      onClick={() => toggleLeaderDropdown(groupId)}
-                    >
-                      <span>👑 {leader.name} (Leader)</span>
-                      <span>{expandedLeaders[groupId] ? "▲" : "▼"}</span>
-                    </div>
-                  ) : (
-                    <p className="text-red-500 font-semibold">No Leader Assigned</p>
-                  )}
+            {leader ? (
+              <div 
+                className="leader bg-blue-900 text-white p-3 rounded-md cursor-pointer flex justify-between"
+                onClick={() => toggleLeaderDropdown(groupId)}
+              >
+                <span>👑 {leader} (Leader)</span>
+                <span>{expandedLeaders[groupId] ? "▲" : "▼"}</span>
+              </div>
+            ) : (
+              <p className="text-red-500 font-semibold">No Leader Assigned</p>
+            )}
 
-                  {expandedLeaders[groupId] && (
-                    <div className="mt-2 bg-gray-100 p-3 rounded-md">
-                      {mentors.length > 0 && (
-                        <div className="mentors mb-2">
-                          <h4 className="font-semibold">🧑‍🏫 Mentors</h4>
-                          <ul className="list-disc ml-5">
-                            {mentors.map((mentor) => (
-                              <li key={mentor.id}>{mentor.name}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
+            {expandedLeaders[groupId] && (
+              <div className="mt-2 bg-gray-100 p-3 rounded-md">
+                {mentors.length > 0 && (
+                  <div className="mentors mb-2">
+                    <h4 className="font-semibold">🧑‍🏫 Mentors</h4>
+                    <ul className="list-disc ml-5">
+                      {mentors.map((mentor, index) => (
+                        <li key={index}>{mentor}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
 
-                      {mentees.length > 0 && (
-                        <div className="mentees">
-                          <h4 className="font-semibold">👨‍🎓 Mentees</h4>
-                          <ul className="list-disc ml-5">
-                            {mentees.map((mentee) => (
-                              <li key={mentee.id}>{mentee.name}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
+                {mentees.length > 0 && (
+                  <div className="mentees">
+                    <h4 className="font-semibold">👨‍🎓 Mentees</h4>
+                    <ul className="list-disc ml-5">
+                      {mentees.map((mentee, index) => (
+                        <li key={index}>{mentee}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
-        ) : (
-          <p className="text-gray-500 text-center">No groups available.</p>
-        )}
-      </div>
+        );
+      })}
+    </div>
+  ) : (
+    <p className="text-gray-500 text-center">No groups available.</p>
+  )}
+</div>
+
 
       {/* Mentors & Mentees Management Section */}
       <div className="bg-white p-6 rounded-lg shadow-md">
