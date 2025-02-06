@@ -42,7 +42,7 @@ const router = createBrowserRouter([
             },
             {
                 path: "/register-mentor",
-                element: <RegisterMentor />
+                element: <PrivateRoute><RegisterMentor /></PrivateRoute>
             },
             {
                 path: "/chats",

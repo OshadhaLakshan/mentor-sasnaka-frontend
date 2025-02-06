@@ -1,13 +1,15 @@
-import React, { useState } from "react";
-import { database, auth } from "../firebase/firebase.config"; // Firebase configuration
+import { useState } from "react";
+import { database } from "../firebase/firebase.config"; // Firebase configuration
 import { ref, push } from "firebase/database";
 import Swal from "sweetalert2";
+import useAuth from '../context/useAuth';
 
 const RegisterMentor = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [expertise, setExpertise] = useState("");
+  const {currentUser} = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,7 +22,7 @@ const RegisterMentor = () => {
     const mentorsRef = ref(database, "mentors/");
     push(mentorsRef, {
       name,
-      email,
+      email: currentUser?.email,
       expertise,
       phone,
       status: "pending", // Default status
@@ -56,14 +58,14 @@ const RegisterMentor = () => {
             />
           </div>
           <div className="mb-4">
-            <label className="block text-sm font-semibold mb-2">Email</label>
-            <input
-              type="email"
+            <label className="block text-sm font-semibold mb-2" htmlFor="email">Email Address</label>
+            <input                                        
+              type="text"
               className="w-full p-2 border rounded"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
+              disabled
+              defaultValue={currentUser?.email}
+              placeholder={currentUser?.email} />
           </div>
           <div className="mb-4">
             <label className="block text-sm font-semibold mb-2">Phone</label>

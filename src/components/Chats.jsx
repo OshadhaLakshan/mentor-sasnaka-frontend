@@ -1,21 +1,24 @@
-import { useState, useEffect } from "react";
-import { database } from "../firebase/firebase.config"; // Firebase configuration
-import { ref, onValue, push } from "firebase/database"; // Firebase Realtime Database methods
+import { useState, useEffect, useContext } from "react";
+import { database } from "../firebase/firebase.config"; // Firebase config
+import { ref, onValue, push } from "firebase/database";
+import AuthContext from "../context/AuthContext"; // Import authentication context
 
 const Chats = () => {
-  const [activeChat, setActiveChat] = useState("leader"); // Default chat is with the leader
+  const { currentUser } = useContext(AuthContext); // Get logged-in user
+  const [activeChat, setActiveChat] = useState("leader"); // Default chat
   const [chatThreads, setChatThreads] = useState({
     leader: [],
     mentor1: [],
     mentor2: [],
     mentor3: [],
-    group: [], // Add group chat
+    group: [], // Group chat
   });
   const [newMessage, setNewMessage] = useState("");
+  const [groupParticipants, setGroupParticipants] = useState({ leader: [], mentors: [], mentees: [] });
 
-  // Fetch messages from Firebase for each active chat
+  // Fetch messages for each active chat
   useEffect(() => {
-    const messagesRef = ref(database, `chats/${activeChat}`); // Dynamic path for each chat thread
+    const messagesRef = ref(database, `chats/${activeChat}`);
     const unsubscribe = onValue(messagesRef, (snapshot) => {
       const data = snapshot.val();
       const formattedMessages = data
@@ -27,22 +30,45 @@ const Chats = () => {
       }));
     });
 
-    return () => unsubscribe(); // Clean up the listener on unmount or activeChat change
+    return () => unsubscribe();
   }, [activeChat]);
 
-  // Function to send a new message to the active chat thread
+  // Fetch group participants categorized by role
+  useEffect(() => {
+    const participantsRef = ref(database, "groups/participants");
+    const unsubscribe = onValue(participantsRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        const leader = [];
+        const mentors = [];
+        const mentees = [];
+
+        Object.values(data).forEach((participant) => {
+          if (participant.role === "leader") leader.push(participant);
+          else if (participant.role === "mentor") mentors.push(participant);
+          else if (participant.role === "mentee") mentees.push(participant);
+        });
+
+        setGroupParticipants({ leader, mentors, mentees });
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  // Function to send a new message
   const sendMessage = () => {
     if (newMessage.trim() === "") return;
 
     const messagesRef = ref(database, `chats/${activeChat}`);
     const newMessageData = {
-      sender: "me", // You can replace "me" with the actual user role
+      sender: currentUser?.displayName || "Unknown",
       text: newMessage,
       timestamp: Date.now(),
     };
 
-    push(messagesRef, newMessageData); // Add new message to Firebase
-    setNewMessage(""); // Clear input field
+    push(messagesRef, newMessageData);
+    setNewMessage(""); // Clear input
   };
 
   return (
@@ -71,18 +97,59 @@ const Chats = () => {
           ))}
         </div>
 
+        {/* Group Participants Section */}
+        <div className="participants mb-4 p-4 border rounded-lg bg-gray-100">
+          <h3 className="text-lg font-semibold mb-2">Group Participants</h3>
+
+          {/* Leader */}
+          {groupParticipants.leader.length > 0 && (
+            <div className="mb-2">
+              <h4 className="font-semibold">Leader</h4>
+              <ul className="list-disc ml-4">
+                {groupParticipants.leader.map((leader) => (
+                  <li key={leader.id}>{leader.name}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* Mentors */}
+          {groupParticipants.mentors.length > 0 && (
+            <div className="mb-2">
+              <h4 className="font-semibold">Mentors</h4>
+              <ul className="list-disc ml-4">
+                {groupParticipants.mentors.map((mentor) => (
+                  <li key={mentor.id}>{mentor.name}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* Mentees */}
+          {groupParticipants.mentees.length > 0 && (
+            <div className="mb-2">
+              <h4 className="font-semibold">Mentees</h4>
+              <ul className="list-disc ml-4">
+                {groupParticipants.mentees.map((mentee) => (
+                  <li key={mentee.id}>{mentee.name}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+
         {/* Chat Messages */}
-        <div className="chat-box h-[calc(100vh-320px)] overflow-y-auto border p-4 mb-4 bg-gray-100 rounded-lg">
+        <div className="chat-box h-[calc(100vh-400px)] overflow-y-auto border p-4 mb-4 bg-gray-100 rounded-lg">
           {chatThreads[activeChat].map((message) => (
             <div
               key={message.id}
               className={`message mb-2 p-2 rounded-md ${
-                message.sender === "me"
+                message.sender === currentUser?.displayName
                   ? "bg-blue-950 text-white self-end pl-20 text-right"
                   : "bg-green-800 text-white self-start pr-20 text-left"
               }`}
             >
-              <p>{message.text}</p>
+              <p>{message.sender}: {message.text}</p>
             </div>
           ))}
         </div>
@@ -91,7 +158,7 @@ const Chats = () => {
         <div className="chat-input flex gap-2">
           <input
             type="text"
-            className="flex-1 border rounded-md p-2 select-auto"
+            className="flex-1 border rounded-md p-2"
             placeholder={`Message ${
               activeChat === "leader"
                 ? "Leader"
