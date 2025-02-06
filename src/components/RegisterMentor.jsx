@@ -13,7 +13,7 @@ const RegisterMentor = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!name || !email || !phone || !expertise) {
+    if (!name || !phone || !expertise) {
       alert("All fields are required!");
       return;
     }
