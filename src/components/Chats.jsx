@@ -81,18 +81,18 @@ const Chats = () => {
           {["leader", "mentor1", "mentor2", "mentor3", "group"].map((chat) => (
             <button
               key={chat}
-              className={`px-4 py-2 rounded-md ${
+              className={`md:px-4 p-1 md:py-2 rounded-md ${
                 activeChat === chat
-                  ? "bg-blue-950 text-white"
-                  : "bg-gray-200 text-black"
+                  ? "bg-blue-950 text-white md:text-md text-sm"
+                  : "bg-gray-200 text-black md:text-md text-sm"
               }`}
               onClick={() => setActiveChat(chat)}
             >
               {chat === "leader"
                 ? "Leader"
                 : chat === "group"
-                ? "Group Chat"
-                : `Mentor ${chat.charAt(chat.length - 1)}`}
+                ? "Group"
+                : `Ment ${chat.charAt(chat.length - 1)}`}
             </button>
           ))}
         </div>
@@ -145,11 +145,11 @@ const Chats = () => {
               key={message.id}
               className={`message mb-2 p-2 rounded-md ${
                 message.sender === currentUser?.displayName
-                  ? "bg-blue-950 text-white self-end pl-20 text-right"
-                  : "bg-green-800 text-white self-start pr-20 text-left"
+                  ? "bg-blue-950 text-white self-end text-right"
+                  : "bg-green-800 text-white self-start text-left"
               }`}
             >
-              <p>{message.sender}: {message.text}</p>
+              <div><b>{message.sender}:</b><br/> {message.text}</div>
             </div>
           ))}
         </div>

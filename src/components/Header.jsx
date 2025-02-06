@@ -35,7 +35,7 @@ const Header = () => {
           <>
           <nav>
             <ul className="flex space-x-4">
-              <li><Link to="/register"><div className="text-lg font-primary text-gray-900 bg-white py-2 px-10 rounded-full hover:bg-gray-400">Register</div></Link></li>
+              <li><Link to="/register"><div className="md:text-lg text-sm font-primary text-gray-900 bg-white md:py-2 py-1 md:px-10 px-3 rounded-full hover:bg-gray-400">Register</div></Link></li>
             </ul>
           </nav>
           </>
