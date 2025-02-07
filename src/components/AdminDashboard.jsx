@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { database } from "../firebase/firebase.config";
 import { ref, onValue, update, remove, push } from "firebase/database";
+import Swal from 'sweetalert2'
 
 const AdminDashboard = () => {
   const [groups, setGroups] = useState({});
@@ -15,6 +16,27 @@ const AdminDashboard = () => {
   const [newGroupLeader, setNewGroupLeader] = useState("");
   const [newGroupMentors, setNewGroupMentors] = useState([]);
   const [newGroupMentees, setNewGroupMentees] = useState([]);
+
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text)
+      .then(() => 
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          title: `Copied ${text}`,
+          showConfirmButton: false,
+          timer: 1500
+        })
+      .catch(() => 
+        Swal.fire({
+          position: "center",
+          icon: "error",
+          title: "Failed to copy",
+          showConfirmButton: false,
+          timer: 1500
+        })
+    ))
+  };
 
   // Fetch Groups and their Participants
   useEffect(() => {
@@ -239,7 +261,19 @@ const AdminDashboard = () => {
             <li key={leader.id} className="border-b py-4 flex justify-between items-center">
               <div>
                 <h3 className="font-bold">{leader.name}</h3>
-                <p>Email: {leader.email}</p>
+                {/* Email ID */}
+                <h2 className="text-lg font-semibold">Leader ID:</h2>
+                <ul className="space-y-2">                
+                    <li className="flex items-center justify-between border p-2 rounded-md bg-gray-50">
+                      <span className="text-gray-500 text-lg px-3 font-mono">{leader.email}</span>
+                      <button
+                        className="bg-gray-300 px-3 py-1 rounded hover:bg-gray-800 hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-600"
+                        onClick={() => copyToClipboard(leader.email)}
+                      >
+                        Copy
+                      </button>
+                    </li>
+                </ul>
               </div>
               <div className="flex gap-2">
                 <button className="bg-purple-500 text-white px-4 py-2 rounded" onClick={() => handleDemote(leader.id)}>Demote</button>
@@ -255,7 +289,19 @@ const AdminDashboard = () => {
             <li key={mentor.id} className="border-b py-4 flex justify-between items-center">
               <div>
                 <h3 className="font-bold">{mentor.name}</h3>
-                <p>Email: {mentor.email}</p>
+                {/* Email ID */}
+                <h2 className="text-lg font-semibold">Mentor ID:</h2>
+                <ul className="space-y-2">                
+                    <li className="flex items-center justify-between border p-2 rounded-md bg-gray-50">
+                      <span className="text-gray-500 text-lg px-3 font-mono">{mentor.email}</span>
+                      <button
+                        className="bg-gray-300 px-3 py-1 rounded hover:bg-gray-800 hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-600"
+                        onClick={() => copyToClipboard(mentor.email)}
+                      >
+                        Copy
+                      </button>
+                    </li>
+                </ul>
               </div>
               <div className="flex gap-2">
                 <button className="bg-blue-500 text-white px-4 py-2 rounded" onClick={() => handlePromote(mentor.id)}>Promote</button>
@@ -271,7 +317,19 @@ const AdminDashboard = () => {
             <li key={mentor.id} className="border-b py-4 flex justify-between items-center">
               <div>
                 <h3 className="font-bold">{mentor.name}</h3>
-                <p>Email: {mentor.email}</p>
+                {/* Email ID */}
+                <h2 className="text-lg font-semibold">Mentor ID:</h2>
+                <ul className="space-y-2">                
+                    <li className="flex items-center justify-between border p-2 rounded-md bg-gray-50">
+                      <span className="text-gray-500 text-lg px-3 font-mono">{mentor.email}</span>
+                      <button
+                        className="bg-gray-300 px-3 py-1 rounded hover:bg-gray-800 hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-600"
+                        onClick={() => copyToClipboard(mentor.email)}
+                      >
+                        Copy
+                      </button>
+                    </li>
+                </ul>
               </div>
               <div className="flex gap-2">
                 <button className="bg-green-500 text-white px-4 py-2 rounded" onClick={() => handleAccept(mentor.id)}>Accept</button>
@@ -287,7 +345,19 @@ const AdminDashboard = () => {
             <li key={mentee.id} className="border-b py-4 flex justify-between items-center">
               <div>
                 <h3 className="font-bold">{mentee.name}</h3>
-                <p>Email: {mentee.email}</p>
+                {/* Email ID */}
+                <h2 className="text-lg font-semibold">Mentee ID:</h2>
+                <ul className="space-y-2">                
+                    <li className="flex items-center justify-between border p-2 rounded-md bg-gray-50">
+                      <span className="text-gray-500 text-lg px-3 font-mono">{mentee.email}</span>
+                      <button
+                        className="bg-gray-300 px-3 py-1 rounded hover:bg-gray-800 hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-600"
+                        onClick={() => copyToClipboard(mentee.email)}
+                      >
+                        Copy
+                      </button>
+                    </li>
+                </ul>
               </div>
               <button className="bg-red-500 text-white px-4 py-2 rounded" onClick={() => handleRemove(mentee.id, "mentee")}>Remove</button>
             </li>
