@@ -220,7 +220,7 @@ const AdminDashboard = () => {
                 className="leader bg-blue-900 text-white p-3 rounded-md cursor-pointer flex justify-between"
                 onClick={() => toggleLeaderDropdown(groupId)}
               >
-                <span>👑 {leader.length < 15 ? leader : leader.substring(0, 10) + "..."} (Leader) &nbsp; &nbsp; &nbsp;</span>
+                <span>👑 {leader.length < 15 ? leader : leader.substring(0, 10) + "...  "} (Leader) &nbsp; &nbsp; &nbsp;</span>
                 <span>{expandedLeaders[groupId] ? "▲" : "▼"}</span>
               </div>
             ) : (
