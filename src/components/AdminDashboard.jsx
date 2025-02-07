@@ -140,23 +140,34 @@ const AdminDashboard = () => {
     const newGroupRef = push(groupsRef);
     update(newGroupRef, newGroup)
       .then(() => {
-        alert("Group created successfully!");
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          title: "Group created successfully!",
+          showConfirmButton: false,
+          timer: 1500
+        });
         setNewGroupName("");
         setNewGroupLeader("");
         setNewGroupMentors([]);
         setNewGroupMentees([]);
       })
-      .catch((error) => {
-        alert("Error creating group: ", error.message);
-      });
+      .catch(() => 
+        Swal.fire({
+          position: "center",
+          icon: "error",
+          title: "Failed to create group",
+          showConfirmButton: false,
+          timer: 1500
+        }));
   };
 
   return (
-    <div className="admin-dashboard p-4">
+    <div className="admin-dashboard flex flex-col items-center justify-center m-4 p-4">
       <h2 className="text-3xl font-bold text-center mb-4">Admin Dashboard</h2>
 
       {/* Create Group Form */}
-      <div className="bg-white p-6 rounded-lg shadow-md mb-6">
+      <div className="bg-white md:w-[calc(100vh-225px)] p-6 rounded-lg shadow-md mb-6">
         <h3 className="text-2xl font-bold mb-4">Create New Group</h3>
         <input
           type="text"
@@ -193,8 +204,8 @@ const AdminDashboard = () => {
       </div>
 
 {/* Groups Section */} 
-<div className="bg-white p-6 rounded-lg shadow-md mb-6">
-  <h3 className="text-2xl font-bold mb-4">Groups & Participants</h3>
+<div className="bg-white md:w-[calc(100vh-225px)] mb-6">
+  <h3 className="text-2xl text-center font-bold mb-4">Groups & Participants</h3>
   {Object.keys(groups).length > 0 ? (
     <div className="space-y-4">
       {Object.keys(groups).map((groupId) => {
@@ -209,7 +220,7 @@ const AdminDashboard = () => {
                 className="leader bg-blue-900 text-white p-3 rounded-md cursor-pointer flex justify-between"
                 onClick={() => toggleLeaderDropdown(groupId)}
               >
-                <span>👑 {leader} (Leader)</span>
+                <span>👑 {leader.length < 18 ? leader : leader.substring(0, 15) + "..."} (Leader)</span>
                 <span>{expandedLeaders[groupId] ? "▲" : "▼"}</span>
               </div>
             ) : (
@@ -252,20 +263,20 @@ const AdminDashboard = () => {
 
 
       {/* Mentors & Mentees Management Section */}
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <h3 className="text-2xl font-bold mb-4">Mentor & Mentee Management</h3>
+      <div className="bg-white md:w-[calc(100vh-225px)] p-6 justify-items-center rounded-lg shadow-md">
+        <h3 className="text-2xl text-center font-bold mb-4">Mentor & Mentee Management</h3>
 
         <h4 className="text-xl font-semibold mt-6 mb-3">Appointed Leaders</h4>
         <ul>
           {leaders.map((leader) => (
-            <li key={leader.id} className="border-b py-4 flex justify-between items-center">
+            <li key={leader.id} className="border-b py-4 justify-between items-center">
               <div>
                 <h3 className="font-bold">{leader.name}</h3>
                 {/* Email ID */}
                 <h2 className="text-lg font-semibold">Leader ID:</h2>
                 <ul className="space-y-2">                
                     <li className="flex items-center justify-between border p-2 rounded-md bg-gray-50">
-                      <span className="text-gray-500 text-lg px-3 font-mono">{leader.email}</span>
+                      <span className="text-gray-500 text-lg px-3 font-mono">{leader.email.length < 25 ? leader.email : leader.email.substring(0, 20) + "..."}</span>
                       <button
                         className="bg-gray-300 px-3 py-1 rounded hover:bg-gray-800 hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-600"
                         onClick={() => copyToClipboard(leader.email)}
@@ -275,7 +286,7 @@ const AdminDashboard = () => {
                     </li>
                 </ul>
               </div>
-              <div className="flex gap-2">
+              <div className="flex mt-3 gap-2">
                 <button className="bg-purple-500 text-white px-4 py-2 rounded" onClick={() => handleDemote(leader.id)}>Demote</button>
                 <button className="bg-red-500 text-white px-4 py-2 rounded" onClick={() => handleRemove(leader.id, "mentor")}>Remove</button>
               </div>
@@ -286,14 +297,14 @@ const AdminDashboard = () => {
         <h4 className="text-xl font-semibold mt-6 mb-3">Approved Mentors</h4>
         <ul>
           {approvedMentors.map((mentor) => (
-            <li key={mentor.id} className="border-b py-4 flex justify-between items-center">
+            <li key={mentor.id} className="border-b py-4 justify-between items-center">
               <div>
                 <h3 className="font-bold">{mentor.name}</h3>
                 {/* Email ID */}
                 <h2 className="text-lg font-semibold">Mentor ID:</h2>
                 <ul className="space-y-2">                
                     <li className="flex items-center justify-between border p-2 rounded-md bg-gray-50">
-                      <span className="text-gray-500 text-lg px-3 font-mono">{mentor.email}</span>
+                      <span className="text-gray-500 text-lg px-3 font-mono">{mentor.email.length < 25 ? mentor.email : mentor.email.substring(0, 20) + "..."}</span>
                       <button
                         className="bg-gray-300 px-3 py-1 rounded hover:bg-gray-800 hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-600"
                         onClick={() => copyToClipboard(mentor.email)}
@@ -303,7 +314,7 @@ const AdminDashboard = () => {
                     </li>
                 </ul>
               </div>
-              <div className="flex gap-2">
+              <div className="flex mt-3 gap-2">
                 <button className="bg-blue-500 text-white px-4 py-2 rounded" onClick={() => handlePromote(mentor.id)}>Promote</button>
                 <button className="bg-red-500 text-white px-4 py-2 rounded" onClick={() => handleRemove(mentor.id, "mentor")}>Remove</button>
               </div>
@@ -314,14 +325,14 @@ const AdminDashboard = () => {
         <h4 className="text-xl font-semibold mt-6 mb-3">Pending Approval</h4>
         <ul>
           {notApprovedMentors.map((mentor) => (
-            <li key={mentor.id} className="border-b py-4 flex justify-between items-center">
+            <li key={mentor.id} className="border-b py-4 justify-between items-center">
               <div>
                 <h3 className="font-bold">{mentor.name}</h3>
                 {/* Email ID */}
                 <h2 className="text-lg font-semibold">Mentor ID:</h2>
                 <ul className="space-y-2">                
                     <li className="flex items-center justify-between border p-2 rounded-md bg-gray-50">
-                      <span className="text-gray-500 text-lg px-3 font-mono">{mentor.email}</span>
+                      <span className="text-gray-500 text-lg px-3 font-mono">{mentor.email.length < 25 ? mentor.email : mentor.email.substring(0, 20) + "..."}</span>
                       <button
                         className="bg-gray-300 px-3 py-1 rounded hover:bg-gray-800 hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-600"
                         onClick={() => copyToClipboard(mentor.email)}
@@ -331,7 +342,7 @@ const AdminDashboard = () => {
                     </li>
                 </ul>
               </div>
-              <div className="flex gap-2">
+              <div className="flex mt-3 gap-2">
                 <button className="bg-green-500 text-white px-4 py-2 rounded" onClick={() => handleAccept(mentor.id)}>Accept</button>
                 <button className="bg-red-500 text-white px-4 py-2 rounded" onClick={() => handleRemove(mentor.id, "mentor")}>Remove</button>
               </div>
@@ -342,14 +353,14 @@ const AdminDashboard = () => {
         <h4 className="text-xl font-semibold mt-6 mb-3">Mentees</h4>
         <ul>
           {mentees.map((mentee) => (
-            <li key={mentee.id} className="border-b py-4 flex justify-between items-center">
+            <li key={mentee.id} className="border-b py-4 justify-between items-center">
               <div>
                 <h3 className="font-bold">{mentee.name}</h3>
                 {/* Email ID */}
                 <h2 className="text-lg font-semibold">Mentee ID:</h2>
                 <ul className="space-y-2">                
                     <li className="flex items-center justify-between border p-2 rounded-md bg-gray-50">
-                      <span className="text-gray-500 text-lg px-3 font-mono">{mentee.email}</span>
+                      <span className="text-gray-500 text-lg px-3 font-mono">{mentee.email.length < 25 ? mentee.email : mentee.email.substring(0, 20) + "..."}</span>
                       <button
                         className="bg-gray-300 px-3 py-1 rounded hover:bg-gray-800 hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-600"
                         onClick={() => copyToClipboard(mentee.email)}
@@ -359,7 +370,7 @@ const AdminDashboard = () => {
                     </li>
                 </ul>
               </div>
-              <button className="bg-red-500 text-white px-4 py-2 rounded" onClick={() => handleRemove(mentee.id, "mentee")}>Remove</button>
+              <button className="bg-red-500 text-white px-4 py-2 mt-3 rounded" onClick={() => handleRemove(mentee.id, "mentee")}>Remove</button>
             </li>
           ))}
         </ul>

@@ -35,18 +35,22 @@ const Chats = () => {
 
   // Fetch group participants categorized by role
   useEffect(() => {
-    const participantsRef = ref(database, "groups/participants");
+    const participantsRef = ref(database, "groups/");
     const unsubscribe = onValue(participantsRef, (snapshot) => {
       const data = snapshot.val();
       if (data) {
-        const leader = [];
-        const mentors = [];
-        const mentees = [];
+        let leader = [];
+        let mentors = [];
+        let mentees = [];
 
-        Object.values(data).forEach((participant) => {
-          if (participant.role === "leader") leader.push(participant);
-          else if (participant.role === "mentor") mentors.push(participant);
-          else if (participant.role === "mentee") mentees.push(participant);
+        Object.values(data).forEach((group) => {
+          if (group.participants) {
+            Object.values(group.participants).forEach((participant) => {
+              if (participant.role === "leader") leader.push(participant);
+              else if (participant.role === "mentor") mentors.push(participant);
+              else if (participant.role === "mentee") mentees.push(participant);
+            });
+          }
         });
 
         setGroupParticipants({ leader, mentors, mentees });
@@ -55,6 +59,10 @@ const Chats = () => {
 
     return () => unsubscribe();
   }, []);
+
+  useEffect(() => {
+    console.log("Group Participants Data:", groupParticipants);
+  }, [groupParticipants]);
 
   // Function to send a new message
   const sendMessage = () => {
@@ -107,7 +115,7 @@ const Chats = () => {
               <h4 className="font-semibold">Leader</h4>
               <ul className="list-disc ml-4">
                 {groupParticipants.leader.map((leader) => (
-                  <li key={leader.id}>{leader.name}</li>
+                  <li key={leader.id || leader.email || Math.random()}>{leader.name || leader.email || "Unknown"}</li>
                 ))}
               </ul>
             </div>
@@ -119,7 +127,7 @@ const Chats = () => {
               <h4 className="font-semibold">Mentors</h4>
               <ul className="list-disc ml-4">
                 {groupParticipants.mentors.map((mentor) => (
-                  <li key={mentor.id}>{mentor.name}</li>
+                  <li key={mentor.id || mentor.email || Math.random()}>{mentor.name || mentor.email || "Unknown"}</li>
                 ))}
               </ul>
             </div>
@@ -131,13 +139,13 @@ const Chats = () => {
               <h4 className="font-semibold">Mentees</h4>
               <ul className="list-disc ml-4">
                 {groupParticipants.mentees.map((mentee) => (
-                  <li key={mentee.id}>{mentee.name}</li>
+                  <li key={mentee.id || mentee.email || Math.random()}>{mentee.name || mentee.email || "Unknown"}</li>
                 ))}
               </ul>
             </div>
           )}
         </div>
-
+        
         {/* Chat Messages */}
         <div className="chat-box h-[calc(100vh-400px)] overflow-y-auto border p-4 mb-4 bg-gray-100 rounded-lg">
           {chatThreads[activeChat].map((message) => (
@@ -145,8 +153,8 @@ const Chats = () => {
               key={message.id}
               className={`message mb-2 p-2 rounded-md ${
                 message.sender === currentUser?.displayName
-                  ? "bg-blue-950 text-white self-end text-right"
-                  : "bg-green-800 text-white self-start text-left"
+                  ? "bg-blue-950 text-white self-end sm:ml-80 ml-12 text-right"
+                  : "bg-green-800 text-white self-start sm:mr-80 mr-12 text-left"
               }`}
             >
               <div><b>{message.sender}:</b><br/> {message.text}</div>

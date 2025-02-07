@@ -120,7 +120,7 @@ const Schedule = () => {
             onChange={(e) => setNewReminder(e.target.value)}
           ></textarea>
         </div>
-        <div className="flex items-center gap-4 rounded-full bg-gray-400 m-6">
+          <div className="flex items-center gap-4 rounded-full bg-gray-400 md:mx-8">
             <button onClick={addReminder} className="text-2xl font-primary text-white bg-blue-950 py-3 px-9 rounded-full hover:bg-black">
               Schedule
             </button>

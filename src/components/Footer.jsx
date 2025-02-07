@@ -24,8 +24,8 @@ const Footer = () => {
 
     </div>
 
-    <div className="max-w-screen-2xl mx-auto flex flex-col md:flex-row justify-between shadow-lg px-10 items-center py-6 bg-gray-900">
-        <p className="text-center text-sm">
+    <div className="max-w-screen-2xl mx-auto flex flex-col md:flex-row justify-between shadow-lg md:px-10 items-center py-6 bg-gray-900">
+        <p className="text-center md:text-sm text-xs">
           &copy; {new Date().getFullYear()} Mentor-Mentee Platform. All rights reserved.
         </p>
         <div className="flex gap-4 mt-4 md:mt-0">
