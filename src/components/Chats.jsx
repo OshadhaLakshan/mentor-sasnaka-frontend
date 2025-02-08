@@ -6,6 +6,7 @@ import AuthContext from "../context/AuthContext"; // Import authentication conte
 const Chats = () => {
   const { currentUser } = useContext(AuthContext); // Get logged-in user
   const [activeChat, setActiveChat] = useState("leader"); // Default chat
+  const [expandedLeaders, setExpandedLeaders] = useState({});
   const [chatThreads, setChatThreads] = useState({
     leader: [], // Leader chat
     mentor1: [], // Mentor chats
@@ -14,7 +15,7 @@ const Chats = () => {
     group: [], // Group chat
   });
   const [newMessage, setNewMessage] = useState(""); // New message input
-  const [groupParticipants, setGroupParticipants] = useState({ leader: [], mentors: [], mentees: [] }); // Group participants
+  const [groups, setGroups] = useState({});
 
   // Fetch messages for each active chat
   useEffect(() => {
@@ -33,36 +34,40 @@ const Chats = () => {
     return () => unsubscribe();
   }, [activeChat]);
 
-  // Fetch group participants categorized by role
+  // Fetch Groups and their Participants
   useEffect(() => {
-    const participantsRef = ref(database, "groups/");
-    const unsubscribe = onValue(participantsRef, (snapshot) => {
+    const groupsRef = ref(database, "groups/");
+    const unsubscribe = onValue(groupsRef, (snapshot) => {
       const data = snapshot.val();
       if (data) {
-        let leader = [];
-        let mentors = [];
-        let mentees = [];
-
-        Object.values(data).forEach((group) => {
-          if (group.participants) {
-            Object.values(group.participants).forEach((participant) => {
-              if (participant.role === "leader") leader.push(participant);
-              else if (participant.role === "mentor") mentors.push(participant);
-              else if (participant.role === "mentee") mentees.push(participant);
-            });
-          }
+        const sortedGroups = {};
+        Object.keys(data).forEach((groupId) => {
+          const groupData = data[groupId];
+  
+          sortedGroups[groupId] = {
+            name: groupData.name || `Group ${groupId}`,
+            leader: groupData.participants?.leader || null, // Single leader email
+            mentors: groupData.participants?.mentors || [], // Array of mentor emails
+            mentees: groupData.participants?.mentees || [], // Array of mentee emails
+          };
         });
-
-        setGroupParticipants({ leader, mentors, mentees });
+  
+        setGroups(sortedGroups);
+      } else {
+        setGroups({});
       }
     });
-
+  
     return () => unsubscribe();
   }, []);
 
-  useEffect(() => {
-    console.log("Group Participants Data:", groupParticipants);
-  }, [groupParticipants]);
+    // Toggle dropdown visibility
+    const toggleLeaderDropdown = (groupId) => {
+      setExpandedLeaders((prev) => ({
+        ...prev,
+        [groupId]: !prev[groupId],
+      }));
+    };
 
   // Function to send a new message
   const sendMessage = () => {
@@ -104,48 +109,6 @@ const Chats = () => {
             </button>
           ))}
         </div>
-
-        {/* Group Participants Section */}
-        <div className="participants mb-4 p-4 border rounded-lg bg-gray-100">
-          <h3 className="text-lg font-semibold mb-2">Group Participants</h3>
-
-          {/* Leader */}
-          {groupParticipants.leader.length > 0 && (
-            <div className="mb-2">
-              <h4 className="font-semibold">Leader</h4>
-              <ul className="list-disc ml-4">
-                {groupParticipants.leader.map((leader) => (
-                  <li key={leader.id || leader.email || Math.random()}>{leader.name || leader.email || "Unknown"}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {/* Mentors */}
-          {groupParticipants.mentors.length > 0 && (
-            <div className="mb-2">
-              <h4 className="font-semibold">Mentors</h4>
-              <ul className="list-disc ml-4">
-                {groupParticipants.mentors.map((mentor) => (
-                  <li key={mentor.id || mentor.email || Math.random()}>{mentor.name || mentor.email || "Unknown"}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {/* Mentees */}
-          {groupParticipants.mentees.length > 0 && (
-            <div className="mb-2">
-              <h4 className="font-semibold">Mentees</h4>
-              <ul className="list-disc ml-4">
-                {groupParticipants.mentees.map((mentee) => (
-                  <li key={mentee.id || mentee.email || Math.random()}>{mentee.name || mentee.email || "Unknown"}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
-        
         {/* Chat Messages */}
         <div className="chat-box h-[calc(100vh-400px)] overflow-y-auto border p-4 mb-4 bg-gray-100 rounded-lg">
           {chatThreads[activeChat].map((message) => (
@@ -184,8 +147,67 @@ const Chats = () => {
             Send
           </button>
         </div>
-      </div>
+        </div>
+
+        {/* Group Participants Section */}
+        <div className="chat-container max-w-3xl mt-10 w-full border rounded-xl shadow-lg p-4 bg-white">
+          <h2 className="text-2xl text-center font-bold mb-4">Group Participants</h2>
+
+          {Object.keys(groups).length > 0 ? (
+          <div className="space-y-4">
+            {Object.keys(groups).map((groupId) => {
+              const { name, leader, mentors, mentees } = groups[groupId];
+
+              return (
+                <div key={groupId} className="border rounded-lg p-4 shadow-md">
+                  <h3 className="text-xl font-semibold mb-2">{name}</h3>
+
+                  {leader ? (
+                    <div 
+                      className="leader bg-blue-900 text-white p-3 rounded-md cursor-pointer flex justify-between"
+                      onClick={() => toggleLeaderDropdown(groupId)}
+                    >
+                      <span>👑 {leader.length < 15 ? leader : leader.substring(0, 10) + "...  "} (Leader) &nbsp; &nbsp; &nbsp;</span>
+                      <span>{expandedLeaders[groupId] ? "▲" : "▼"}</span>
+                    </div>
+                  ) : (
+                    <p className="text-red-500 font-semibold">No Leader Assigned</p>
+                  )}
+
+                  {expandedLeaders[groupId] && (
+                    <div className="mt-2 bg-gray-100 p-3 rounded-md">
+                      {mentors.length > 0 && (
+                        <div className="mentors mb-2">
+                          <h4 className="font-semibold">🧑‍🏫 Mentors</h4>
+                          <ul className="list-disc ml-5">
+                            {mentors.map((mentor, index) => (
+                              <li key={index}>{mentor}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+
+                      {mentees.length > 0 && (
+                        <div className="mentees">
+                          <h4 className="font-semibold">👨‍🎓 Mentees</h4>
+                          <ul className="list-disc ml-5">
+                            {mentees.map((mentee, index) => (
+                              <li key={index}>{mentee}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <p className="text-gray-500 text-center">No groups available.</p>
+        )}
     </div>
+  </div>
   );
 };
 

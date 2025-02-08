@@ -161,10 +161,56 @@ const AdminDashboard = () => {
           timer: 1500
         }));
   };
+  
+  // const [activeSection, setActiveSection] = useState("new"); // Default section
+
+  // const [sectionThreads, setSectionThreads] = useState({
+  //   New: [], // Create New Group
+  //   Existing: [], // Existing groups
+  //   Users: [], // User Section
+  // });
+
+  // Fetch sections for each active section
+  // useEffect(() => {
+  //   const messagesRef = ref(database, `chats/${activeChat}`);
+  //   const unsubscribe = onValue(messagesRef, (snapshot) => {
+  //     const data = snapshot.val();
+  //     const formattedMessages = data
+  //       ? Object.keys(data).map((key) => ({ id: key, ...data[key] }))
+  //       : [];
+  //     setChatThreads((prevThreads) => ({
+  //       ...prevThreads,
+  //       [activeChat]: formattedMessages,
+  //     }));
+  //   });
+
+  //   return () => unsubscribe();
+  // }, [activeChat]);
 
   return (
     <div className="admin-dashboard flex flex-col items-center justify-center m-4 p-4">
       <h2 className="text-3xl font-bold text-center mb-4">Admin Dashboard</h2>
+
+        {/* Chat Selector
+        <div className="chat-selector flex justify-evenly mb-4 border-b pb-2">
+          {["leader", "mentor1", "mentor2", "mentor3", "group"].map((chat) => (
+            <button
+              key={chat}
+              className={`md:px-4 p-1 md:py-2 rounded-md ${
+                activeChat === chat
+                  ? "bg-blue-950 text-white md:text-md text-sm"
+                  : "bg-gray-200 text-black md:text-md text-sm"
+              }`}
+              onClick={() => setActiveChat(chat)}
+            >
+              {chat === "leader"
+                ? "Leader"
+                : chat === "group"
+                ? "Group"
+                : `Ment ${chat.charAt(chat.length - 1)}`}
+            </button>
+          ))}
+        </div> */}
 
       {/* Create Group Form */}
       <div className="bg-white md:w-[calc(100vh-225px)] p-6 rounded-lg shadow-md mb-6">
