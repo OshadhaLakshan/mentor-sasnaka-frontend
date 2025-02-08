@@ -112,7 +112,7 @@ const Schedule = () => {
         </div>
 
         {/* Add Reminder */}
-        <div className="mt-4 flex flex-col gap-4">
+        <div className="my-4 flex flex-col gap-4">
           <textarea
             className="w-full h-24 p-4 border rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-blue-950"
             placeholder="Reminder details..."

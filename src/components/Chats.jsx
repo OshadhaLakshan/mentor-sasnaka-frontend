@@ -1,20 +1,20 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext } from "react"; // React hooks
 import { database } from "../firebase/firebase.config"; // Firebase config
-import { ref, onValue, push } from "firebase/database";
+import { ref, onValue, push } from "firebase/database"; // Firebase database functions
 import AuthContext from "../context/AuthContext"; // Import authentication context
 
 const Chats = () => {
   const { currentUser } = useContext(AuthContext); // Get logged-in user
   const [activeChat, setActiveChat] = useState("leader"); // Default chat
   const [chatThreads, setChatThreads] = useState({
-    leader: [],
-    mentor1: [],
-    mentor2: [],
-    mentor3: [],
+    leader: [], // Leader chat
+    mentor1: [], // Mentor chats
+    mentor2: [], // Mentor chats
+    mentor3: [], // Mentor chats
     group: [], // Group chat
   });
-  const [newMessage, setNewMessage] = useState("");
-  const [groupParticipants, setGroupParticipants] = useState({ leader: [], mentors: [], mentees: [] });
+  const [newMessage, setNewMessage] = useState(""); // New message input
+  const [groupParticipants, setGroupParticipants] = useState({ leader: [], mentors: [], mentees: [] }); // Group participants
 
   // Fetch messages for each active chat
   useEffect(() => {
