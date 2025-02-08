@@ -299,7 +299,7 @@ const AdminDashboard = () => {
           {["leader", "mentor", "mentee", "pending"].map((user) => (
             <button
               key={user}
-              className={`md:px-4 mx-4 p-1 md:py-2 rounded-md ${
+              className={`md:px-3 mx-1 p-1 md:py-2 rounded-md ${
                 activeUser === user
                   ? "bg-blue-950 text-white md:text-md text-sm"
                   : "bg-gray-200 text-black md:text-md text-sm"
