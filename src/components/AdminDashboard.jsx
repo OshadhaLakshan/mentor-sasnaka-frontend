@@ -6,7 +6,6 @@ import Swal from 'sweetalert2'
 const AdminDashboard = () => {
   const [groups, setGroups] = useState({});
   const [expandedLeaders, setExpandedLeaders] = useState({});
-
   const [leaders, setLeaders] = useState([]);
   const [approvedMentors, setApprovedMentors] = useState([]);
   const [notApprovedMentors, setNotApprovedMentors] = useState([]);
@@ -162,57 +161,36 @@ const AdminDashboard = () => {
         }));
   };
   
-  // const [activeSection, setActiveSection] = useState("new"); // Default section
-
-  // const [sectionThreads, setSectionThreads] = useState({
-  //   New: [], // Create New Group
-  //   Existing: [], // Existing groups
-  //   Users: [], // User Section
-  // });
-
-  // Fetch sections for each active section
-  // useEffect(() => {
-  //   const messagesRef = ref(database, `chats/${activeChat}`);
-  //   const unsubscribe = onValue(messagesRef, (snapshot) => {
-  //     const data = snapshot.val();
-  //     const formattedMessages = data
-  //       ? Object.keys(data).map((key) => ({ id: key, ...data[key] }))
-  //       : [];
-  //     setChatThreads((prevThreads) => ({
-  //       ...prevThreads,
-  //       [activeChat]: formattedMessages,
-  //     }));
-  //   });
-
-  //   return () => unsubscribe();
-  // }, [activeChat]);
+  const [activeSection, setActiveSection] = useState("new"); // Default section
+  const [activeUser, setActiveUser] = useState("leader"); // Default user
 
   return (
     <div className="admin-dashboard flex flex-col items-center justify-center m-4 p-4">
       <h2 className="text-3xl font-bold text-center mb-4">Admin Dashboard</h2>
 
-        {/* Chat Selector
-        <div className="chat-selector flex justify-evenly mb-4 border-b pb-2">
-          {["leader", "mentor1", "mentor2", "mentor3", "group"].map((chat) => (
-            <button
-              key={chat}
-              className={`md:px-4 p-1 md:py-2 rounded-md ${
-                activeChat === chat
-                  ? "bg-blue-950 text-white md:text-md text-sm"
-                  : "bg-gray-200 text-black md:text-md text-sm"
-              }`}
-              onClick={() => setActiveChat(chat)}
-            >
-              {chat === "leader"
-                ? "Leader"
-                : chat === "group"
-                ? "Group"
-                : `Ment ${chat.charAt(chat.length - 1)}`}
-            </button>
-          ))}
-        </div> */}
+      {/* Section Selector */}
+      <div className="chat-selector flex justify-evenly mb-4 border-b pb-2">
+        {["new", "existing", "users"].map((section) => (
+          <button
+            key={section}
+            className={`md:px-4 mx-4 p-1 md:py-2 rounded-md ${
+              activeSection === section
+                ? "bg-blue-950 text-white md:text-md text-sm"
+                : "bg-gray-200 text-black md:text-md text-sm"
+            }`}
+            onClick={() => setActiveSection(section)}
+          >
+            {section === "new"
+              ? "New"
+              : section === "existing"
+              ? "Existing"
+              : "Users"}
+          </button>
+        ))}
+      </div>
 
       {/* Create Group Form */}
+      {activeSection === "new" && (
       <div className="bg-white md:w-[calc(100vh-225px)] p-6 rounded-lg shadow-md mb-6">
         <h3 className="text-2xl font-bold mb-4">Create New Group</h3>
         <input
@@ -248,70 +226,99 @@ const AdminDashboard = () => {
           Create Group
         </button>
       </div>
+      )}
 
-{/* Groups Section */} 
-<div className="bg-white md:w-[calc(100vh-225px)] mb-6">
-  <h3 className="text-2xl text-center font-bold mb-4">Groups & Participants</h3>
-  {Object.keys(groups).length > 0 ? (
-    <div className="space-y-4">
-      {Object.keys(groups).map((groupId) => {
-        const { name, leader, mentors, mentees } = groups[groupId];
+      {/* Groups Section */}
+      {activeSection === "existing" && ( 
+      <div className="bg-white md:w-[calc(100vh-225px)] mb-6">
+        <h3 className="text-2xl text-center font-bold mb-4">Groups & Participants</h3>
+        {Object.keys(groups).length > 0 ? (
+          <div className="space-y-4">
+            {Object.keys(groups).map((groupId) => {
+              const { name, leader, mentors, mentees } = groups[groupId];
 
-        return (
-          <div key={groupId} className="border rounded-lg p-4 shadow-md">
-            <h3 className="text-xl font-semibold mb-2">{name}</h3>
+              return (
+                <div key={groupId} className="border rounded-lg p-4 shadow-md">
+                  <h3 className="text-xl font-semibold mb-2">{name}</h3>
 
-            {leader ? (
-              <div 
-                className="leader bg-blue-900 text-white p-3 rounded-md cursor-pointer flex justify-between"
-                onClick={() => toggleLeaderDropdown(groupId)}
-              >
-                <span>👑 {leader.length < 15 ? leader : leader.substring(0, 10) + "...  "} (Leader) &nbsp; &nbsp; &nbsp;</span>
-                <span>{expandedLeaders[groupId] ? "▲" : "▼"}</span>
-              </div>
-            ) : (
-              <p className="text-red-500 font-semibold">No Leader Assigned</p>
-            )}
+                  {leader ? (
+                    <div 
+                      className="leader bg-blue-900 text-white p-3 rounded-md cursor-pointer flex justify-between"
+                      onClick={() => toggleLeaderDropdown(groupId)}
+                    >
+                      <span>👑 {leader.length < 15 ? leader : leader.substring(0, 10) + "...  "} (Leader) &nbsp; &nbsp; &nbsp;</span>
+                      <span>{expandedLeaders[groupId] ? "▲" : "▼"}</span>
+                    </div>
+                  ) : (
+                    <p className="text-red-500 font-semibold">No Leader Assigned</p>
+                  )}
 
-            {expandedLeaders[groupId] && (
-              <div className="mt-2 bg-gray-100 p-3 rounded-md">
-                {mentors.length > 0 && (
-                  <div className="mentors mb-2">
-                    <h4 className="font-semibold">🧑‍🏫 Mentors</h4>
-                    <ul className="list-disc ml-5">
-                      {mentors.map((mentor, index) => (
-                        <li key={index}>{mentor}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
+                  {expandedLeaders[groupId] && (
+                    <div className="mt-2 bg-gray-100 p-3 rounded-md">
+                      {mentors.length > 0 && (
+                        <div className="mentors mb-2">
+                          <h4 className="font-semibold">🧑‍🏫 Mentors</h4>
+                          <ul className="list-disc ml-5">
+                            {mentors.map((mentor, index) => (
+                              <li key={index}>{mentor}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
 
-                {mentees.length > 0 && (
-                  <div className="mentees">
-                    <h4 className="font-semibold">👨‍🎓 Mentees</h4>
-                    <ul className="list-disc ml-5">
-                      {mentees.map((mentee, index) => (
-                        <li key={index}>{mentee}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
-            )}
+                      {mentees.length > 0 && (
+                        <div className="mentees">
+                          <h4 className="font-semibold">👨‍🎓 Mentees</h4>
+                          <ul className="list-disc ml-5">
+                            {mentees.map((mentee, index) => (
+                              <li key={index}>{mentee}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
-        );
-      })}
-    </div>
-  ) : (
-    <p className="text-gray-500 text-center">No groups available.</p>
-  )}
-</div>
+        ) : (
+          <p className="text-gray-500 text-center">No groups available.</p>
+        )}
+      </div>
+      )}
 
 
-      {/* Mentors & Mentees Management Section */}
+      {/* Mentor & Mentee Management */}
+      {activeSection === "users" && (
       <div className="bg-white md:w-[calc(100vh-225px)] p-6 justify-items-center rounded-lg shadow-md">
         <h3 className="text-2xl text-center font-bold mb-4">Mentor & Mentee Management</h3>
 
+        {/* User Selector */}
+        <div className="chat-selector flex justify-evenly mb-4 border-b pb-2">
+          {["leader", "mentor", "mentee", "pending"].map((user) => (
+            <button
+              key={user}
+              className={`md:px-4 mx-4 p-1 md:py-2 rounded-md ${
+                activeUser === user
+                  ? "bg-blue-950 text-white md:text-md text-sm"
+                  : "bg-gray-200 text-black md:text-md text-sm"
+              }`}
+              onClick={() => setActiveUser(user)}
+            >
+              {user === "leader"
+                ? "Leaders"
+                : user === "mentor"
+                ? "Mentors"
+                : user === "mentee"
+                ? "Mentees"
+                : "Pending"}  
+            </button>
+          ))}
+        </div>
+
+        {activeUser === "leader" && (
+        <div>
         <h4 className="text-xl font-semibold mt-6 mb-3">Appointed Leaders</h4>
         <ul>
           {leaders.map((leader) => (
@@ -339,7 +346,11 @@ const AdminDashboard = () => {
             </li>
           ))}
         </ul>
+        </div>
+        )}
 
+        {activeUser === "mentor" && (
+        <div>
         <h4 className="text-xl font-semibold mt-6 mb-3">Approved Mentors</h4>
         <ul>
           {approvedMentors.map((mentor) => (
@@ -367,7 +378,11 @@ const AdminDashboard = () => {
             </li>
           ))}
         </ul>
+        </div>
+        )}
 
+        {activeUser === "pending" && (
+        <div>
         <h4 className="text-xl font-semibold mt-6 mb-3">Pending Approval</h4>
         <ul>
           {notApprovedMentors.map((mentor) => (
@@ -395,7 +410,11 @@ const AdminDashboard = () => {
             </li>
           ))}
         </ul>
+        </div>
+        )}
 
+        {activeUser === "mentee" && (
+        <div>
         <h4 className="text-xl font-semibold mt-6 mb-3">Mentees</h4>
         <ul>
           {mentees.map((mentee) => (
@@ -420,7 +439,10 @@ const AdminDashboard = () => {
             </li>
           ))}
         </ul>
+        </div>
+        )}
       </div>
+      )}
     </div>
   );
 };
