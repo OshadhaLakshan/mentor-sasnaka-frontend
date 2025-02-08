@@ -173,7 +173,7 @@ const AdminDashboard = () => {
         {["new", "existing", "users"].map((section) => (
           <button
             key={section}
-            className={`md:px-4 mx-4 p-1 md:py-2 rounded-md ${
+            className={`md:px-4 mx-4 p-1 px-2 md:py-2 rounded-md ${
               activeSection === section
                 ? "bg-blue-950 text-white md:text-md text-sm"
                 : "bg-gray-200 text-black md:text-md text-sm"
