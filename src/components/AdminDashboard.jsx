@@ -191,7 +191,7 @@ const AdminDashboard = () => {
 
       {/* Create Group Form */}
       {activeSection === "new" && (
-      <div className="bg-white md:w-[calc(100vh-225px)] p-6 rounded-lg shadow-md mb-6">
+      <div className="bg-white md:w-[calc(100vh-225px)] pb-6 px-6 rounded-lg shadow-md mb-6">
         <h3 className="text-2xl font-bold mb-4">Create New Group</h3>
         <input
           type="text"
@@ -291,7 +291,7 @@ const AdminDashboard = () => {
 
       {/* Mentor & Mentee Management */}
       {activeSection === "users" && (
-      <div className="bg-white md:w-[calc(100vh-225px)] p-6 justify-items-center rounded-lg shadow-md">
+      <div className="bg-white md:w-[calc(100vh-225px)] pb-6 px-6 justify-items-center rounded-lg shadow-md">
         <h3 className="text-2xl text-center font-bold mb-4">Mentor & Mentee Management</h3>
 
         {/* User Selector */}
@@ -415,7 +415,7 @@ const AdminDashboard = () => {
 
         {activeUser === "mentee" && (
         <div>
-        <h4 className="text-xl font-semibold mt-6 mb-3">Mentees</h4>
+        <h4 className="text-xl font-semibold mt-6 mb-3">Approved Mentees</h4>
         <ul>
           {mentees.map((mentee) => (
             <li key={mentee.id} className="border-b py-4 justify-between items-center">
