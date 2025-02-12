@@ -15,7 +15,7 @@ const Banner = () => {
             <img
             src="/fav-icon.png"
             alt="Logo"
-            className="w-full h-full filter drop-shadow-[0_0_2rem_rgba(187,308,341,0.7)] hover:filter hover:drop-shadow-[0_0_3rem_rgba(97,218,251,0.7)]"
+            className="w-full h-full filter drop-shadow-[0_0_2rem_rgba(87,208,241,0.7)] hover:filter hover:drop-shadow-[0_0_3rem_rgba(97,218,251,0.7)]"
             />
         </div>
         <div
