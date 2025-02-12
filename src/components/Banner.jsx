@@ -9,7 +9,7 @@ const Banner = () => {
       <div className="md:grid grid-cols-2 items-center justify-between bg-[#778a96]">
         {/* Logo Section */}
         <div className="grid grid-raws-2 pb-0 md:pb-10 pt-10 px-20"><div
-            className="relative mx-auto w-60 h-60 flex items-center justify-center animate-spin-slow"
+            className="relative mx-auto w-60 h-60 flex items-center justify-center"
             style={{ animationDuration: '60s' }}
         >
             <img
